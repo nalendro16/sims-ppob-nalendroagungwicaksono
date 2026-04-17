@@ -41,12 +41,23 @@ export default function Login() {
         { requireAuth: false },
       )
 
-      sessionStorage.setItem('token', response.data?.token)
+      if (response?.data?.token) {
+        sessionStorage.setItem('token', response.data.token)
+      } else {
+        setErrorMessage('Token tidak ditemukan')
+      }
+
       alert(response.message || 'Login Berhasil!')
 
       navigate('/')
     } catch (error) {
-      setErrorMessage(error.message)
+      if (error instanceof Error) {
+        setErrorMessage(error.message)
+      } else if (typeof error === 'string') {
+        setErrorMessage(error)
+      } else {
+        setErrorMessage('Terjadi kesalahan yang tidak diketahui')
+      }
     } finally {
       setIsLoading(false)
     }

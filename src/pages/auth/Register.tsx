@@ -55,7 +55,13 @@ export default function Register() {
 
       navigate('/login')
     } catch (error) {
-      setErrorMessage(error.message)
+      if (error instanceof Error) {
+        setErrorMessage(error.message)
+      } else if (typeof error === 'string') {
+        setErrorMessage(error)
+      } else {
+        setErrorMessage('Terjadi kesalahan yang tidak diketahui')
+      }
     } finally {
       setIsLoading(false)
     }

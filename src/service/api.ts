@@ -50,9 +50,11 @@ async function fetchClient<T>(
     }
 
     return data as ApiResponse<T>
-  } catch (error) {
-    console.error(`[API Error] ${endpoint}:`, error.message)
-    throw error
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
+
+    throw error || errorMessage
   }
 }
 

@@ -32,7 +32,7 @@ export default function Dashboard() {
       <ProfileBalanceCard />
 
       <div className='flex items-center my-6 gap-4 overflow-x-auto no-scrollbar'>
-        {servicesRes?.data.map((service) => (
+        {servicesRes?.data?.map((service) => (
           <Link
             to={`/product/${service.service_code}`}
             key={service.service_code}
@@ -55,7 +55,7 @@ export default function Dashboard() {
 
       <span className='mt-12 mb-8 font-semibold'>Temukan Promo Menarik</span>
       <div className='flex items-center gap-4 overflow-x-auto mt-2'>
-        {bannerRes?.data.map((banner) => (
+        {bannerRes?.data?.map((banner) => (
           <div className='h-full w-full' key={banner.banner_name}>
             <img
               src={banner.banner_image}
