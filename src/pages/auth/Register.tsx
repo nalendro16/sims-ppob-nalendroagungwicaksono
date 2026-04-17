@@ -5,6 +5,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { IllustrasiLogin, Logo } from '../../assets'
 import { useState } from 'react'
 import { api } from '../../service/api'
+import { useDispatch } from 'react-redux'
+import { showToast } from '../../store/slices/uiSlice'
 
 const registerSchema = z
   .object({
@@ -23,6 +25,7 @@ type RegisterInput = z.infer<typeof registerSchema>
 
 export default function Register() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -51,7 +54,12 @@ export default function Register() {
         { requireAuth: false },
       )
 
-      alert(response.message || 'Registrasi Berhasil!')
+      dispatch(
+        showToast({
+          message: response.message || 'Registrasi Berhasil!',
+          type: 'success',
+        }),
+      )
 
       navigate('/login')
     } catch (error) {

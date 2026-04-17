@@ -14,7 +14,7 @@ export default function Transaction() {
   const [allRecords, setAllRecords] = useState<TransactionItemType[]>([])
   const [hasMore, setHasMore] = useState(true)
 
-  const { isLoading, isFetching } = useQuery({
+  const { isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: ['transactions-list', offset],
     queryFn: async () => {
       const res = await api.get<TransactionHistoryResponse>(
@@ -48,6 +48,20 @@ export default function Transaction() {
       <ProfileBalanceCard className='mb-8' />
 
       <div className='text-lg font-semibold my-6'>Semua Transaksi</div>
+
+      {isError && (
+        <div className='p-6 border border-red-200 bg-red-50 rounded-lg text-center mb-6'>
+          <p className='text-red-600 font-medium mb-2'>
+            Gagal memuat transaksi: {(error as Error).message}
+          </p>
+          <button
+            onClick={() => refetch()}
+            className='text-red-500 font-bold underline text-sm'
+          >
+            Coba Lagi
+          </button>
+        </div>
+      )}
 
       {allRecords.length !== 0 ? (
         <div className='space-y-6'>

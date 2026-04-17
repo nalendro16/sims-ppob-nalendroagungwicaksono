@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 import z from 'zod'
 import { useState } from 'react'
 import { api } from '../../service/api'
+import { showToast } from '../../store/slices/uiSlice'
+import { useDispatch } from 'react-redux'
 
 const LoginSchema = z.object({
   email: z.string().email('Format email tidak valid'),
@@ -17,6 +19,7 @@ export default function Login() {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const dispatch = useDispatch()
 
   const {
     register,
@@ -47,7 +50,12 @@ export default function Login() {
         setErrorMessage('Token tidak ditemukan')
       }
 
-      alert(response.message || 'Login Berhasil!')
+      dispatch(
+        showToast({
+          message: response.message || 'Login Berhasil!',
+          type: 'success',
+        }),
+      )
 
       navigate('/')
     } catch (error) {

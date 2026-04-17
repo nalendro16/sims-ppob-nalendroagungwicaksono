@@ -3,9 +3,12 @@ import type { ServiceItemType } from '../../types/dashboard'
 import { api } from '../../service/api'
 import { useNavigate, useParams } from 'react-router-dom'
 import ProfileBalanceCard from '../../components/profile-balance-card'
+import { showToast } from '../../store/slices/uiSlice'
+import { useDispatch } from 'react-redux'
 
 export default function Product() {
   const { id } = useParams<{ id: string }>()
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { data: servicesRes } = useQuery({
@@ -17,12 +20,22 @@ export default function Product() {
     mutationFn: (code: string) =>
       api.post('/transaction', { service_code: code }),
     onSuccess: (res) => {
-      alert(res.message || 'Pembayaran Berhasil!')
+      dispatch(
+        showToast({
+          message: res.message || 'Pembayaran Berhasil!',
+          type: 'success',
+        }),
+      )
       queryClient.invalidateQueries({ queryKey: ['balance'] })
       navigate('/')
     },
     onError: (err) => {
-      alert(err.message || 'Pembayaran Gagal')
+      dispatch(
+        showToast({
+          message: err.message || 'Pembayaran Gagal!',
+          type: 'error',
+        }),
+      )
     },
   })
 

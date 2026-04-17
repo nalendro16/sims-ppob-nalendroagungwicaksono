@@ -5,10 +5,13 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../service/api'
 import { DefaultProfile } from '../assets'
 import type { UserProfileType } from '../types/dashboard'
+import { showToast } from '../store/slices/uiSlice'
+import { useDispatch } from 'react-redux'
 
 export default function Profile() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const dispatch = useDispatch()
   const [isEdit, setIsEdit] = useState(false)
 
   const { data: profileRes, isLoading } = useQuery({
@@ -40,8 +43,13 @@ export default function Profile() {
       first_name: string
       last_name: string
     }) => api.put('/profile/update', data),
-    onSuccess: () => {
-      alert('Profile berhasil diperbarui!')
+    onSuccess: (res) => {
+      dispatch(
+        showToast({
+          message: res.message || 'Top Up Berhasil!',
+          type: 'success',
+        }),
+      )
       queryClient.invalidateQueries({ queryKey: ['profile'] })
       setIsEdit(false)
     },
@@ -55,8 +63,13 @@ export default function Profile() {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
     },
-    onSuccess: () => {
-      alert('Foto berhasil diperbarui!')
+    onSuccess: (res) => {
+      dispatch(
+        showToast({
+          message: res.message || 'Top Up Berhasil!',
+          type: 'success',
+        }),
+      )
       queryClient.invalidateQueries({ queryKey: ['profile'] })
     },
   })
@@ -64,13 +77,25 @@ export default function Profile() {
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      if (file.size > 1024 * 100) return alert('Ukuran file maksimal 100KB')
+      if (file.size > 1024 * 100)
+        return dispatch(
+          showToast({
+            message: 'Ukuran file terlalu besar. Maksimal 100KB.',
+            type: 'error',
+          }),
+        )
       updateImage.mutate(file)
     }
   }
 
   const handleLogout = () => {
     sessionStorage.removeItem('token')
+    dispatch(
+      showToast({
+        message: 'Logout Berhasil!',
+        type: 'success',
+      }),
+    )
     navigate('/login')
   }
 

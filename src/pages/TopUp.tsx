@@ -2,11 +2,14 @@ import { Controller, useForm } from 'react-hook-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../service/api'
 import ProfileBalanceCard from '../components/profile-balance-card'
+import { useDispatch } from 'react-redux'
+import { showToast } from '../store/slices/uiSlice'
 
 const PRESETS = [10000, 20000, 50000, 100000, 250000, 500000]
 
 export default function TopUp() {
   const queryClient = useQueryClient()
+  const dispatch = useDispatch()
 
   const {
     control,
@@ -23,18 +26,31 @@ export default function TopUp() {
     mutationFn: (amount: number) =>
       api.post('/topup', { top_up_amount: amount }),
     onSuccess: (res) => {
-      alert(res.message || 'Top Up Berhasil!')
+      dispatch(
+        showToast({
+          message: res.message || 'Top Up Berhasil!',
+          type: 'success',
+        }),
+      )
       queryClient.invalidateQueries({ queryKey: ['balance'] })
       setValue('top_up_amount', '')
     },
     onError: (err) => {
-      alert(err.message || 'Top Up Gagal')
+      dispatch(
+        showToast({ message: err.message || 'Top Up Gagal', type: 'error' }),
+      )
     },
   })
 
   const onSubmit = (data: { top_up_amount: string }) => {
     const nominal = parseInt(data.top_up_amount)
-    if (nominal > 1000000) return alert('Maksimal Top Up adalah Rp1.000.000')
+    if (nominal > 1000000) return
+    dispatch(
+      showToast({
+        message: 'Maksimal Top Up adalah Rp1.000.000',
+        type: 'error',
+      }),
+    )
     mutation.mutate(nominal)
   }
 
