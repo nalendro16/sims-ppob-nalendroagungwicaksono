@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+:root {
+  --bg-saldo: url('/src/assets/Background_Saldo.png');
+}
+
+@utility bg-card-saldo {
+  background-image: var(--bg-saldo);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
